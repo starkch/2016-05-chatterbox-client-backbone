@@ -53,11 +53,27 @@ var ChatsView = Backbone.View.extend({
     return this.$el;
   },
 
+  menuHasRoom: function (roomname) {
+      var drop_content = _.first($('.dropdown'));
+      var roomExists = false;
+      for (var i = 0; i < drop_content.length; i++) {
+          if (drop_content.children[i].outerHTML.indexOf(roomname) > -1) {
+              roomExists = true;
+              break;
+          }
+      }
+    //   var roomExists = this.model.reduce(function (acc, obj) {
+    //       acc = acc || obj.get('roomname') === roomname;
+    //       return acc;
+    //   }, false);
+      return roomExists;
+  },
+  
   displayMessage: function(msg, selectedRoom, chats) {
     var username = escapeHtml(msg.get("username"));
     var roomname = escapeHtml(msg.get('roomname'));
     var friendclass = msg.get('isFriend') ? ' friendchats' : '';
-    if (roomname && roomname.length > 0 && !_.contains(app._rooms, roomname)) {
+    if (roomname && roomname.length > 0 && !this.menuHasRoom(roomname)) {
         this.createRoom(roomname);
     }
 
@@ -74,13 +90,12 @@ var ChatsView = Backbone.View.extend({
 
 
     createRoom: function(name) {
-        if (name && name.length > 0 && !_.contains(app._rooms, name)) {
+        if (name && name.length > 0 && !this.menuHasRoom(name)) {
             var displayName = name;
             if (displayName.length > 50) {
                 displayName = displayName.substring(0, 49);
                 displayName += '...';
             }
-            app._rooms.push(name);
             var dropdownmenu = _.first($('.dropdown'));
             var $menuStr = $('<option value="' + name +'">' + displayName + '</option>');
             $menuStr.appendTo(dropdownmenu);
@@ -97,7 +112,6 @@ var app = {
 app._user = window.location.search.substring(1).split("=")[1];
 app._lastCreated = '2015-02-17T00:50:32.494Z';
 app._friends = [];
-app._rooms = ["New Room..."];
 app._chatsView = undefined;
 
 app.init = function() {
