@@ -57,7 +57,8 @@ var ChatsView = Backbone.View.extend({
       var drop_content = _.first($('.dropdown'));
       var roomExists = false;
       for (var i = 0; i < drop_content.length; i++) {
-          if (drop_content.children[i].outerHTML.indexOf(roomname) > -1) {
+          if (drop_content.children[i]['namestring'] === roomname) {
+          //if (drop_content.children[i].outerHTML.indexOf(roomname) > -1) {
               roomExists = true;
               break;
           }
@@ -92,12 +93,13 @@ var ChatsView = Backbone.View.extend({
     createRoom: function(name) {
         if (name && name.length > 0 && !this.menuHasRoom(name)) {
             var displayName = name;
-            if (displayName.length > 50) {
-                displayName = displayName.substring(0, 49);
+            if (displayName.length > 35) {
+                displayName = displayName.substring(0, 35);
                 displayName += '...';
             }
             var dropdownmenu = _.first($('.dropdown'));
-            var $menuStr = $('<option value="' + name +'">' + displayName + '</option>');
+            var $menuStr = $('<option value="' + name + '">' + displayName + '</option>');
+            _.first($menuStr)['namestring'] = name;
             $menuStr.appendTo(dropdownmenu);
             dropdownmenu.selectedIndex = dropdownmenu.length-1;
         }
